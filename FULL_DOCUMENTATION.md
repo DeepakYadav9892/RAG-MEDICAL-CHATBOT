@@ -193,9 +193,17 @@ git push origin main
 
 ```bash
 docker exec -u root -it jenkins-dind bash
-apt install -y
-curl -LO https://github.com/aquasecurity/trivy/releases/download/v0.62.1/trivy_0.62.1_Linux-64bit.deb
-dpkg -i trivy_0.62.1_Linux-64bit.deb
+apt-get update
+apt-get install -y wget apt-transport-https gnupg lsb-release
+
+wget -qO - https://aquasecurity.github.io/trivy-repo/deb/public.key | gpg --dearmor | tee /usr/share/keyrings/trivy.gpg > /dev/null
+
+echo "deb [signed-by=/usr/share/keyrings/trivy.gpg] https://aquasecurity.github.io/trivy-repo/deb generic main" | tee -a /etc/apt/sources.list.d/trivy.list
+
+apt-get update
+
+apt-get install -y trivy
+
 trivy --version
 exit
 ```
@@ -204,6 +212,7 @@ Then restart the container:
 
 ```bash
 docker restart jenkins-dind
+
 ```
 
 ---
