@@ -1,0 +1,432 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>🩺 AI Medical Assistant</title>
+
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+<style>
+
+*{
+    margin:0;
+    padding:0;
+    box-sizing:border-box;
+}
+
+body{
+    font-family:'Poppins',sans-serif;
+    min-height:100vh;
+    overflow:hidden;
+
+    background:
+    linear-gradient(rgba(0,0,0,0.55),rgba(0,0,0,0.55)),
+    url('https://images.unsplash.com/photo-1588776814546-1ffcf47267a5?q=80&w=2070');
+
+    background-size:cover;
+    background-position:center;
+
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    padding:20px;
+}
+
+/* Animated background glow */
+
+body::before{
+    content:'';
+    position:absolute;
+    width:500px;
+    height:500px;
+    background:#2563eb;
+    border-radius:50%;
+    filter:blur(150px);
+    opacity:0.3;
+    top:-100px;
+    left:-100px;
+    animation:moveGlow 8s infinite alternate;
+}
+
+body::after{
+    content:'';
+    position:absolute;
+    width:400px;
+    height:400px;
+    background:#0ea5e9;
+    border-radius:50%;
+    filter:blur(140px);
+    opacity:0.25;
+    bottom:-100px;
+    right:-100px;
+    animation:moveGlow2 8s infinite alternate;
+}
+
+@keyframes moveGlow{
+    from{
+        transform:translate(0,0);
+    }
+    to{
+        transform:translate(80px,50px);
+    }
+}
+
+@keyframes moveGlow2{
+    from{
+        transform:translate(0,0);
+    }
+    to{
+        transform:translate(-60px,-40px);
+    }
+}
+
+.chat-container{
+    position:relative;
+    z-index:10;
+
+    width:100%;
+    max-width:950px;
+    height:90vh;
+
+    backdrop-filter:blur(18px);
+    background:rgba(255,255,255,0.08);
+
+    border:1px solid rgba(255,255,255,0.15);
+
+    border-radius:28px;
+
+    overflow:hidden;
+
+    box-shadow:
+    0 10px 40px rgba(0,0,0,0.3),
+    inset 0 0 20px rgba(255,255,255,0.05);
+
+    display:flex;
+    flex-direction:column;
+}
+
+/* Header */
+
+.header{
+    padding:25px;
+    text-align:center;
+
+    background:rgba(255,255,255,0.08);
+    border-bottom:1px solid rgba(255,255,255,0.1);
+
+    color:white;
+}
+
+.header h1{
+    font-size:2.3rem;
+    font-weight:700;
+
+    animation:floatText 3s ease-in-out infinite;
+}
+
+.header p{
+    margin-top:8px;
+    opacity:0.85;
+}
+
+@keyframes floatText{
+    0%{
+        transform:translateY(0px);
+    }
+    50%{
+        transform:translateY(-4px);
+    }
+    100%{
+        transform:translateY(0px);
+    }
+}
+
+/* Chat Box */
+
+#chat-box{
+    flex:1;
+    overflow-y:auto;
+    padding:25px;
+}
+
+/* Messages */
+
+.message{
+    max-width:75%;
+    padding:18px;
+    margin-bottom:18px;
+
+    border-radius:20px;
+
+    line-height:1.7;
+
+    animation:fadeIn 0.4s ease;
+    backdrop-filter:blur(10px);
+}
+
+.user{
+    margin-left:auto;
+
+    background:linear-gradient(135deg,#2563eb,#0ea5e9);
+
+    color:white;
+
+    border-bottom-right-radius:5px;
+
+    box-shadow:0 5px 20px rgba(37,99,235,0.4);
+}
+
+.assistant{
+    margin-right:auto;
+
+    background:rgba(255,255,255,0.12);
+
+    color:white;
+
+    border:1px solid rgba(255,255,255,0.1);
+
+    border-bottom-left-radius:5px;
+
+    box-shadow:0 5px 20px rgba(0,0,0,0.15);
+}
+
+.message strong{
+    display:block;
+    margin-bottom:8px;
+    font-size:0.95rem;
+}
+
+/* Input Area */
+
+.input-area{
+    padding:20px;
+
+    background:rgba(255,255,255,0.06);
+
+    border-top:1px solid rgba(255,255,255,0.1);
+}
+
+textarea{
+    width:100%;
+    min-height:70px;
+
+    resize:none;
+
+    border:none;
+
+    border-radius:18px;
+
+    padding:18px;
+
+    font-size:1rem;
+
+    outline:none;
+
+    background:rgba(255,255,255,0.12);
+
+    color:white;
+
+    backdrop-filter:blur(8px);
+
+    transition:0.3s;
+}
+
+textarea::placeholder{
+    color:rgba(255,255,255,0.7);
+}
+
+textarea:focus{
+    transform:scale(1.01);
+
+    box-shadow:
+    0 0 15px rgba(37,99,235,0.4);
+}
+
+/* Buttons */
+
+.button-group{
+    display:flex;
+    gap:15px;
+    margin-top:18px;
+}
+
+button{
+    border:none;
+    padding:14px 24px;
+
+    border-radius:14px;
+
+    font-size:1rem;
+    font-weight:600;
+
+    cursor:pointer;
+
+    transition:0.3s;
+}
+
+.send-btn{
+    flex:1;
+
+    background:linear-gradient(135deg,#2563eb,#0ea5e9);
+
+    color:white;
+
+    box-shadow:0 5px 20px rgba(37,99,235,0.4);
+}
+
+.send-btn:hover{
+    transform:translateY(-3px) scale(1.02);
+
+    box-shadow:0 10px 25px rgba(37,99,235,0.5);
+}
+
+.clear-btn{
+    background:linear-gradient(135deg,#ef4444,#dc2626);
+
+    color:white;
+}
+
+.clear-btn:hover{
+    transform:translateY(-3px);
+
+    box-shadow:0 10px 20px rgba(239,68,68,0.4);
+}
+
+/* Scrollbar */
+
+::-webkit-scrollbar{
+    width:8px;
+}
+
+::-webkit-scrollbar-thumb{
+    background:#60a5fa;
+    border-radius:20px;
+}
+
+/* Fade Animation */
+
+@keyframes fadeIn{
+    from{
+        opacity:0;
+        transform:translateY(15px);
+    }
+    to{
+        opacity:1;
+        transform:translateY(0);
+    }
+}
+
+/* Mobile */
+
+@media(max-width:768px){
+
+    .chat-container{
+        height:95vh;
+    }
+
+    .message{
+        max-width:92%;
+    }
+
+    .header h1{
+        font-size:1.7rem;
+    }
+}
+.credit{
+    position:fixed;
+    bottom:15px;
+    right:20px;
+
+    color:white;
+    font-size:0.95rem;
+
+    background:rgba(255,255,255,0.08);
+    padding:10px 16px;
+
+    border-radius:12px;
+
+    backdrop-filter:blur(10px);
+
+    border:1px solid rgba(255,255,255,0.1);
+
+    z-index:999;
+}
+
+.credit span{
+    color:#60a5fa;
+    font-weight:600;
+}
+
+</style>
+</head>
+
+<body>
+
+<div class="chat-container">
+
+    <div class="header">
+        <h1>🩺 AI Medical RAG Assistant</h1>
+        <p>Smart Medical Intelligence Powered Using RAG + LLM By Deepak Yadav</p>
+    </div>
+
+    <div id="chat-box">
+
+        {% for msg in messages %}
+
+        <div class="message {{ msg.role }}">
+
+            {% if msg.role == "user" %}
+                <strong>👨 You</strong>
+            {% else %}
+                <strong>🤖 AI Doctor</strong>
+            {% endif %}
+
+            {{ msg.content | safe | nl2br }}
+
+        </div>
+
+        {% endfor %}
+
+    </div>
+
+    <div class="input-area">
+
+        <form method="post" action="{{ url_for('index') }}">
+
+            <textarea
+            name="prompt"
+            placeholder="Ask any medical question..."
+            required></textarea>
+
+            <div class="button-group">
+
+                <button type="submit" class="send-btn">
+                    🚀 Ask AI Assistant
+                </button>
+
+            </div>
+
+        </form>
+
+        <form method="get" action="{{ url_for('clear') }}">
+
+            <div class="button-group">
+
+                <button type="submit" class="clear-btn">
+                    🗑 Clear Chat
+                </button>
+
+            </div>
+
+        </form>
+
+    </div>
+
+</div>
+<div class="credit">
+    Developed by ❤️ Deepak Yadav
+</div>
+</body>
+</html>
